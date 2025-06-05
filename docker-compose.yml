@@ -1,0 +1,56 @@
+services:
+  remote-host:
+    image: ubuntu:22.04
+    container_name: remote-host
+    networks:
+      test-net:
+        ipv4_address: 192.168.100.10
+    command: >
+      bash -c "
+        apt update &&
+        DEBIAN_FRONTEND=noninteractive apt install -y python3 &&
+        python3 -m http.server 8000 --bind 0.0.0.0
+      "
+    tty: true
+    stdin_open: true
+
+  remote-host-2:
+    image: ubuntu:22.04
+    container_name: remote-host-2
+    networks:
+      test-net:
+        ipv4_address: 192.168.100.11
+    command: >
+      bash -c "
+        apt update &&
+        DEBIAN_FRONTEND=noninteractive apt install -y python3 &&
+        python3 -m http.server 8080 --bind 0.0.0.0
+      "
+    tty: true
+    stdin_open: true
+
+  scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scanner
+    networks:
+      test-net:
+        ipv4_address: 192.168.100.20
+    volumes:
+      - .:/app
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: >
+      bash -c "
+        python3 run_scanner.py || echo 'Scanner script exited';
+        tail -f /dev/null
+      "
+
+networks:
+  test-net:
+    driver: bridge # Docker gateway or the virtual router, acts as a bridge that connects all containers.
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
