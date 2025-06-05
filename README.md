@@ -1,5 +1,8 @@
 # 🔍 Python Port Scanner
 
+![Demo](assets/demo.gif)
+
+
 ## 🛠️ Local Setup Instructions
 
 ### 1️⃣ Clone the Repository
@@ -8,7 +11,6 @@
 git clone https://github.com/your-username/port_scanner.git
 cd port_scanner
 ```
-
 
 ### 2️⃣ Create and Activate a Virtual Environment
 
